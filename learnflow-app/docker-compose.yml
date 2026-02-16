@@ -73,10 +73,12 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:8001
       BETTER_AUTH_SECRET: dev-secret-change-in-production-min32chars
       BETTER_AUTH_URL: http://localhost:3000
+      DATABASE_URL: postgresql://learnflow:learnflow_dev@postgres:5432/learnflow
     depends_on:
-      - triage
-    volumes:
-      - ./frontend/src:/app/src
+      postgres:
+        condition: service_healthy
+      triage:
+        condition: service_started
 
   # ============================================================
   # Backend Microservices
