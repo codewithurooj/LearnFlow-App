@@ -1,0 +1,26 @@
+{
+  "id": "api/exercise",
+  "title": "Exercise Service API",
+  "description": "The Exercise Service generates coding challenges, auto-grades submissions, and provides feedback.",
+  "source": "@site/docs/api/exercise.md",
+  "sourceDirName": "api",
+  "slug": "/api/exercise",
+  "permalink": "/api/exercise",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "sidebar_position": 5
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Debug Service API",
+    "permalink": "/api/debug"
+  },
+  "next": {
+    "title": "Progress Service API",
+    "permalink": "/api/progress"
+  }
+}

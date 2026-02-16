@@ -1,0 +1,26 @@
+{
+  "id": "api/debug",
+  "title": "Debug Service API",
+  "description": "The Debug Service analyzes error messages, identifies root causes, and provides hints before revealing full solutions.",
+  "source": "@site/docs/api/debug.md",
+  "sourceDirName": "api",
+  "slug": "/api/debug",
+  "permalink": "/api/debug",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "sidebar_position": 4
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Code Runner Service API",
+    "permalink": "/api/code-runner"
+  },
+  "next": {
+    "title": "Exercise Service API",
+    "permalink": "/api/exercise"
+  }
+}

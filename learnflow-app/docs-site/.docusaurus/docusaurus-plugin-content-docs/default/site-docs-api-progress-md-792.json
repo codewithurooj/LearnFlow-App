@@ -1,0 +1,26 @@
+{
+  "id": "api/progress",
+  "title": "Progress Service API",
+  "description": "The Progress Service tracks student mastery across topics and provides detailed performance analytics.",
+  "source": "@site/docs/api/progress.md",
+  "sourceDirName": "api",
+  "slug": "/api/progress",
+  "permalink": "/api/progress",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 6,
+  "frontMatter": {
+    "sidebar_position": 6
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Exercise Service API",
+    "permalink": "/api/exercise"
+  },
+  "next": {
+    "title": "Code Review Service API",
+    "permalink": "/api/code-review"
+  }
+}

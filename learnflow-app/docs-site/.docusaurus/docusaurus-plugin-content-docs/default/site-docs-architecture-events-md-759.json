@@ -1,0 +1,26 @@
+{
+  "id": "architecture/events",
+  "title": "Event System",
+  "description": "LearnFlow uses Kafka topics via Dapr pub/sub for asynchronous communication.",
+  "source": "@site/docs/architecture/events.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/events",
+  "permalink": "/architecture/events",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Services",
+    "permalink": "/architecture/services"
+  },
+  "next": {
+    "title": "Triage Service API",
+    "permalink": "/api/triage"
+  }
+}

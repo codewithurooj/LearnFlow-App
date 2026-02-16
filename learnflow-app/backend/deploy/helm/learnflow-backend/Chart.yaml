@@ -1,0 +1,24 @@
+apiVersion: v2
+name: learnflow-backend
+description: LearnFlow AI-Powered Python Tutoring Backend Microservices
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - learnflow
+  - python
+  - tutoring
+  - ai
+  - microservices
+  - dapr
+
+maintainers:
+  - name: LearnFlow Team
+    email: team@learnflow.dev
+
+dependencies:
+  - name: common
+    version: "^1.0.0"
+    repository: "file://../common"
+    condition: common.enabled

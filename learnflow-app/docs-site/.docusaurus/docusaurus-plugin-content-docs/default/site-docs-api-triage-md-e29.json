@@ -1,0 +1,26 @@
+{
+  "id": "api/triage",
+  "title": "Triage Service API",
+  "description": "The Triage Service routes student questions to appropriate specialist agents based on query classification.",
+  "source": "@site/docs/api/triage.md",
+  "sourceDirName": "api",
+  "slug": "/api/triage",
+  "permalink": "/api/triage",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Event System",
+    "permalink": "/architecture/events"
+  },
+  "next": {
+    "title": "Concepts Service API",
+    "permalink": "/api/concepts"
+  }
+}

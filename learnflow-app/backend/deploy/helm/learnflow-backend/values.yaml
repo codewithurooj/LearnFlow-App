@@ -1,0 +1,266 @@
+# LearnFlow Backend Configuration
+# Default values for learnflow-backend Helm chart
+
+# Global settings
+global:
+  namespace: learnflow
+  imageRegistry: ""
+  imagePullSecrets: []
+
+# OpenAI Configuration
+openai:
+  apiKey: ""  # Set via --set openai.apiKey=... or secret
+  model: "gpt-4-turbo-preview"
+  timeout: 30
+
+# Dapr Configuration
+dapr:
+  enabled: true
+  pubsubName: "pubsub-kafka"
+  statestoreName: "statestore-postgres"
+  httpPort: 3500
+  grpcPort: 50001
+
+# Common service configuration
+common:
+  enabled: false
+  environment: "production"
+  logLevel: "INFO"
+  logFormat: "json"
+
+# Kafka Topics
+kafka:
+  topics:
+    learningQuestions: "learning.questions"
+    learningResponses: "learning.responses"
+    codeSubmissions: "code.submissions"
+    codeResults: "code.results"
+    struggleDetected: "struggle.detected"
+    progressUpdated: "progress.updated"
+
+# Service Configurations
+
+triage:
+  enabled: true
+  name: triage-service
+  port: 8001
+  replicaCount: 2
+  image:
+    repository: learnflow-triage
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+concepts:
+  enabled: true
+  name: concepts-service
+  port: 8002
+  replicaCount: 2
+  image:
+    repository: learnflow-concepts
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+codeRunner:
+  enabled: true
+  name: code-runner-service
+  port: 8003
+  replicaCount: 2
+  image:
+    repository: learnflow-code-runner
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+  # Sandbox configuration
+  sandbox:
+    timeout: 5
+    memoryLimitMb: 50
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+
+debug:
+  enabled: true
+  name: debug-service
+  port: 8004
+  replicaCount: 2
+  image:
+    repository: learnflow-debug
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  # Struggle detection thresholds
+  struggle:
+    errorThreshold: 3
+    stuckMinutes: 10
+    failureThreshold: 5
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+exercise:
+  enabled: true
+  name: exercise-service
+  port: 8005
+  replicaCount: 2
+  image:
+    repository: learnflow-exercise
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+progress:
+  enabled: true
+  name: progress-service
+  port: 8006
+  replicaCount: 2
+  image:
+    repository: learnflow-progress
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
+  # Mastery calculation weights
+  mastery:
+    weightExercises: 0.4
+    weightQuizzes: 0.3
+    weightCodeQuality: 0.2
+    weightStreak: 0.1
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+codeReview:
+  enabled: true
+  name: code-review-service
+  port: 8007
+  replicaCount: 2
+  image:
+    repository: learnflow-code-review
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  autoscaling:
+    enabled: false
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 70
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: learnflow.local
+      paths:
+        - path: /api/v1/triage
+          pathType: Prefix
+          service: triage
+        - path: /api/v1/concepts
+          pathType: Prefix
+          service: concepts
+        - path: /api/v1/code
+          pathType: Prefix
+          service: codeRunner
+        - path: /api/v1/debug
+          pathType: Prefix
+          service: debug
+        - path: /api/v1/exercises
+          pathType: Prefix
+          service: exercise
+        - path: /api/v1/progress
+          pathType: Prefix
+          service: progress
+        - path: /api/v1/review
+          pathType: Prefix
+          service: codeReview
+  tls: []
+
+# Service account
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 1000
+
+# Container security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+# Health check configuration
+healthCheck:
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 1

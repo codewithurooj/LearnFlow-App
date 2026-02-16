@@ -1,0 +1,84 @@
+{{- if .Values.debug.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.debug.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.debug.name }}
+spec:
+  replicas: {{ .Values.debug.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.debug.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.debug.name }}
+        {{- include "learnflow-backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- include "learnflow-backend.daprAnnotations" (dict "appId" .Values.debug.name "appPort" .Values.debug.port) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "learnflow-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: debug
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.debug.image.repository }}:{{ .Values.debug.image.tag }}"
+          imagePullPolicy: {{ .Values.debug.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.debug.port }}
+              protocol: TCP
+          env:
+            {{- include "learnflow-backend.commonEnv" . | nindent 12 }}
+            - name: SERVICE_NAME
+              value: {{ .Values.debug.name | quote }}
+            - name: PORT
+              value: {{ .Values.debug.port | quote }}
+            - name: STRUGGLE_ERROR_THRESHOLD
+              value: {{ .Values.debug.struggle.errorThreshold | quote }}
+            - name: STRUGGLE_STUCK_MINUTES
+              value: {{ .Values.debug.struggle.stuckMinutes | quote }}
+            - name: TOPIC_STRUGGLE_DETECTED
+              value: {{ .Values.kafka.topics.struggleDetected | quote }}
+          resources:
+            {{- toYaml .Values.debug.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthCheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            successThreshold: {{ .Values.healthCheck.successThreshold }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.debug.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.debug.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.debug.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.debug.name }}
+{{- end }}

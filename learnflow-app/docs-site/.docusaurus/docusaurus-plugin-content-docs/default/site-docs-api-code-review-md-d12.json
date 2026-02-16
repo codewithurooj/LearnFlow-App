@@ -1,0 +1,26 @@
+{
+  "id": "api/code-review",
+  "title": "Code Review Service API",
+  "description": "The Code Review Service analyzes submitted code for correctness, style compliance, efficiency, and best practices.",
+  "source": "@site/docs/api/code-review.md",
+  "sourceDirName": "api",
+  "slug": "/api/code-review",
+  "permalink": "/api/code-review",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 7,
+  "frontMatter": {
+    "sidebar_position": 7
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Progress Service API",
+    "permalink": "/api/progress"
+  },
+  "next": {
+    "title": "Skills Library",
+    "permalink": "/skills/overview"
+  }
+}

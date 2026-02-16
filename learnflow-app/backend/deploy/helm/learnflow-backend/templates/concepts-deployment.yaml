@@ -1,0 +1,78 @@
+{{- if .Values.concepts.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.concepts.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.concepts.name }}
+spec:
+  replicas: {{ .Values.concepts.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.concepts.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.concepts.name }}
+        {{- include "learnflow-backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- include "learnflow-backend.daprAnnotations" (dict "appId" .Values.concepts.name "appPort" .Values.concepts.port) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "learnflow-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: concepts
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.concepts.image.repository }}:{{ .Values.concepts.image.tag }}"
+          imagePullPolicy: {{ .Values.concepts.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.concepts.port }}
+              protocol: TCP
+          env:
+            {{- include "learnflow-backend.commonEnv" . | nindent 12 }}
+            - name: SERVICE_NAME
+              value: {{ .Values.concepts.name | quote }}
+            - name: PORT
+              value: {{ .Values.concepts.port | quote }}
+          resources:
+            {{- toYaml .Values.concepts.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthCheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            successThreshold: {{ .Values.healthCheck.successThreshold }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.concepts.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.concepts.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.concepts.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.concepts.name }}
+{{- end }}

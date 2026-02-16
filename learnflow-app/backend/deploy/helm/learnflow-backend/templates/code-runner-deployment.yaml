@@ -1,0 +1,112 @@
+{{- if .Values.codeRunner.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.codeRunner.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.codeRunner.name }}
+spec:
+  replicas: {{ .Values.codeRunner.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.codeRunner.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.codeRunner.name }}
+        {{- include "learnflow-backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- include "learnflow-backend.daprAnnotations" (dict "appId" .Values.codeRunner.name "appPort" .Values.codeRunner.port) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "learnflow-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: code-runner
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.codeRunner.image.repository }}:{{ .Values.codeRunner.image.tag }}"
+          imagePullPolicy: {{ .Values.codeRunner.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.codeRunner.port }}
+              protocol: TCP
+          env:
+            {{- include "learnflow-backend.commonEnv" . | nindent 12 }}
+            - name: SERVICE_NAME
+              value: {{ .Values.codeRunner.name | quote }}
+            - name: PORT
+              value: {{ .Values.codeRunner.port | quote }}
+            - name: CODE_EXECUTION_TIMEOUT
+              value: {{ .Values.codeRunner.sandbox.timeout | quote }}
+            - name: CODE_MEMORY_LIMIT_MB
+              value: {{ .Values.codeRunner.sandbox.memoryLimitMb | quote }}
+            - name: TOPIC_CODE_SUBMISSIONS
+              value: {{ .Values.kafka.topics.codeSubmissions | quote }}
+            - name: TOPIC_CODE_RESULTS
+              value: {{ .Values.kafka.topics.codeResults | quote }}
+            - name: TOPIC_STRUGGLE_DETECTED
+              value: {{ .Values.kafka.topics.struggleDetected | quote }}
+            - name: STRUGGLE_FAILURE_THRESHOLD
+              value: {{ .Values.debug.struggle.failureThreshold | quote }}
+          resources:
+            {{- toYaml .Values.codeRunner.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthCheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            successThreshold: {{ .Values.healthCheck.successThreshold }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.codeRunner.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.codeRunner.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.codeRunner.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.codeRunner.name }}
+{{- if .Values.codeRunner.autoscaling.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.codeRunner.name }}-hpa
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.codeRunner.name }}
+  minReplicas: {{ .Values.codeRunner.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.codeRunner.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.codeRunner.autoscaling.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- end }}

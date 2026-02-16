@@ -1,0 +1,76 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to promote (e.g., sha-abc1234)"
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  ORG: learnflow
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    name: Promote to Production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate image tag format
+        run: |
+          if [[ ! "${{ inputs.image_tag }}" =~ ^sha-[a-f0-9]{7,}$ ]]; then
+            echo "Error: Image tag must be in format 'sha-<short-sha>'"
+            exit 1
+          fi
+
+      - name: Verify images exist in GHCR
+        run: |
+          SERVICES=(
+            triage-service
+            concepts-service
+            debug-service
+            code-review-service
+            exercise-service
+            progress-service
+            code-runner
+            frontend
+          )
+          for SERVICE in "${SERVICES[@]}"; do
+            echo "Checking ${{ env.REGISTRY }}/${{ env.ORG }}/${SERVICE}:${{ inputs.image_tag }}..."
+            docker manifest inspect "${{ env.REGISTRY }}/${{ env.ORG }}/${SERVICE}:${{ inputs.image_tag }}" > /dev/null 2>&1 || {
+              echo "Error: Image not found for ${SERVICE}:${{ inputs.image_tag }}"
+              exit 1
+            }
+            echo "✓ ${SERVICE}:${{ inputs.image_tag }} exists"
+          done
+        env:
+          DOCKER_CLI_EXPERIMENTAL: enabled
+
+      - name: Update production kustomization image tags
+        run: |
+          cd k8s/overlays/production
+          sed -i "s|newTag: .*|newTag: ${{ inputs.image_tag }}|g" kustomization.yaml
+
+      - name: Commit production promotion
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/overlays/production/kustomization.yaml
+          git commit -m "chore: promote ${{ inputs.image_tag }} to production [skip ci]"
+          git push
+
+      - name: Verify Argo CD sync
+        if: env.ARGOCD_SERVER != ''
+        run: |
+          argocd app sync learnflow-production --server "${{ secrets.ARGOCD_SERVER }}" --auth-token "${{ secrets.ARGOCD_AUTH_TOKEN }}"
+          argocd app wait learnflow-production --health --server "${{ secrets.ARGOCD_SERVER }}" --auth-token "${{ secrets.ARGOCD_AUTH_TOKEN }}"
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}

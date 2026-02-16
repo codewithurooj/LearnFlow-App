@@ -1,0 +1,26 @@
+{
+  "id": "api/concepts",
+  "title": "Concepts Service API",
+  "description": "The Concepts Service explains Python concepts, provides examples, and adapts explanations to student skill levels.",
+  "source": "@site/docs/api/concepts.md",
+  "sourceDirName": "api",
+  "slug": "/api/concepts",
+  "permalink": "/api/concepts",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "sidebar_position": 2
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Triage Service API",
+    "permalink": "/api/triage"
+  },
+  "next": {
+    "title": "Code Runner Service API",
+    "permalink": "/api/code-runner"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "api/code-runner",
+  "title": "Code Runner Service API",
+  "description": "The Code Runner Service executes Python code in a sandboxed environment with strict resource limits.",
+  "source": "@site/docs/api/code-runner.md",
+  "sourceDirName": "api",
+  "slug": "/api/code-runner",
+  "permalink": "/api/code-runner",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Concepts Service API",
+    "permalink": "/api/concepts"
+  },
+  "next": {
+    "title": "Debug Service API",
+    "permalink": "/api/debug"
+  }
+}

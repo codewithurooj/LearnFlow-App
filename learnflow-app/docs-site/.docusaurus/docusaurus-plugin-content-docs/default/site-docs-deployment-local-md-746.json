@@ -1,0 +1,26 @@
+{
+  "id": "deployment/local",
+  "title": "Local Development",
+  "description": "Prerequisites",
+  "source": "@site/docs/deployment/local.md",
+  "sourceDirName": "deployment",
+  "slug": "/deployment/local",
+  "permalink": "/deployment/local",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Creating Skills",
+    "permalink": "/skills/creating-skills"
+  },
+  "next": {
+    "title": "Kubernetes Deployment",
+    "permalink": "/deployment/kubernetes"
+  }
+}

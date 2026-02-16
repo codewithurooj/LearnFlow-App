@@ -1,0 +1,82 @@
+{{- if .Values.triage.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.triage.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.triage.name }}
+spec:
+  replicas: {{ .Values.triage.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.triage.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.triage.name }}
+        {{- include "learnflow-backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- include "learnflow-backend.daprAnnotations" (dict "appId" .Values.triage.name "appPort" .Values.triage.port) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "learnflow-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: triage
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.triage.image.repository }}:{{ .Values.triage.image.tag }}"
+          imagePullPolicy: {{ .Values.triage.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.triage.port }}
+              protocol: TCP
+          env:
+            {{- include "learnflow-backend.commonEnv" . | nindent 12 }}
+            - name: SERVICE_NAME
+              value: {{ .Values.triage.name | quote }}
+            - name: PORT
+              value: {{ .Values.triage.port | quote }}
+            - name: TOPIC_LEARNING_QUESTIONS
+              value: {{ .Values.kafka.topics.learningQuestions | quote }}
+            - name: TOPIC_LEARNING_RESPONSES
+              value: {{ .Values.kafka.topics.learningResponses | quote }}
+          resources:
+            {{- toYaml .Values.triage.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthCheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            successThreshold: {{ .Values.healthCheck.successThreshold }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.triage.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.triage.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.triage.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.triage.name }}
+{{- end }}

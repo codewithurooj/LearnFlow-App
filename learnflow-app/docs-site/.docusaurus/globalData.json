@@ -1,0 +1,108 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/",
+          "mainDocId": "intro",
+          "docs": [
+            {
+              "id": "api/code-review",
+              "path": "/api/code-review",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/code-runner",
+              "path": "/api/code-runner",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/concepts",
+              "path": "/api/concepts",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/debug",
+              "path": "/api/debug",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/exercise",
+              "path": "/api/exercise",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/progress",
+              "path": "/api/progress",
+              "sidebar": "docs"
+            },
+            {
+              "id": "api/triage",
+              "path": "/api/triage",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/events",
+              "path": "/architecture/events",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/overview",
+              "path": "/architecture/overview",
+              "sidebar": "docs"
+            },
+            {
+              "id": "architecture/services",
+              "path": "/architecture/services",
+              "sidebar": "docs"
+            },
+            {
+              "id": "deployment/kubernetes",
+              "path": "/deployment/kubernetes",
+              "sidebar": "docs"
+            },
+            {
+              "id": "deployment/local",
+              "path": "/deployment/local",
+              "sidebar": "docs"
+            },
+            {
+              "id": "deployment/production",
+              "path": "/deployment/production",
+              "sidebar": "docs"
+            },
+            {
+              "id": "intro",
+              "path": "/",
+              "sidebar": "docs"
+            },
+            {
+              "id": "skills/creating-skills",
+              "path": "/skills/creating-skills",
+              "sidebar": "docs"
+            },
+            {
+              "id": "skills/overview",
+              "path": "/skills/overview",
+              "sidebar": "docs"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "docs": {
+              "link": {
+                "path": "/",
+                "label": "intro"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

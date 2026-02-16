@@ -1,0 +1,63 @@
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+      target_revision:
+        description: "Target revision (Argo CD history ID or git SHA)"
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    name: Rollback ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Argo CD CLI
+        run: |
+          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv argocd /usr/local/bin/
+
+      - name: Execute rollback
+        run: |
+          APP_NAME="learnflow-${{ inputs.environment }}"
+          echo "Rolling back ${APP_NAME} to revision ${{ inputs.target_revision }}"
+          argocd app rollback "${APP_NAME}" "${{ inputs.target_revision }}" \
+            --server "${{ secrets.ARGOCD_SERVER }}" \
+            --auth-token "${{ secrets.ARGOCD_AUTH_TOKEN }}"
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+
+      - name: Wait for health
+        run: |
+          APP_NAME="learnflow-${{ inputs.environment }}"
+          argocd app wait "${APP_NAME}" --health --timeout 300 \
+            --server "${{ secrets.ARGOCD_SERVER }}" \
+            --auth-token "${{ secrets.ARGOCD_AUTH_TOKEN }}"
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+
+      - name: Verify rollback
+        run: |
+          APP_NAME="learnflow-${{ inputs.environment }}"
+          HEALTH=$(argocd app get "${APP_NAME}" -o json \
+            --server "${{ secrets.ARGOCD_SERVER }}" \
+            --auth-token "${{ secrets.ARGOCD_AUTH_TOKEN }}" | jq -r '.status.health.status')
+          if [[ "$HEALTH" == "Healthy" ]]; then
+            echo "✓ Rollback successful - ${APP_NAME} is Healthy"
+          else
+            echo "✗ Rollback completed but health is: $HEALTH"
+            exit 1
+          fi
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}

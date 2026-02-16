@@ -1,0 +1,15 @@
+# Concepts Service Dependencies
+-e ./shared
+
+# FastAPI and server
+fastapi>=0.109.0,<1.0.0
+uvicorn[standard]>=0.27.0,<1.0.0
+
+# OpenAI for AI explanations
+openai>=1.12.0,<2.0.0
+
+# HTTP client
+httpx>=0.26.0,<1.0.0
+
+# Logging
+structlog>=24.1.0,<25.0.0

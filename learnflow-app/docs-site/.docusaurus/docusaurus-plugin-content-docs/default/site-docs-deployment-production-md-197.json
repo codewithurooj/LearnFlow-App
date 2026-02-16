@@ -1,0 +1,22 @@
+{
+  "id": "deployment/production",
+  "title": "Production Deployment",
+  "description": "Production uses ArgoCD for GitOps-based continuous delivery.",
+  "source": "@site/docs/deployment/production.md",
+  "sourceDirName": "deployment",
+  "slug": "/deployment/production",
+  "permalink": "/deployment/production",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "Kubernetes Deployment",
+    "permalink": "/deployment/kubernetes"
+  }
+}

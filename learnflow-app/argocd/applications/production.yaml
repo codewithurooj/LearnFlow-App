@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: learnflow-production
+  namespace: argocd
+spec:
+  project: learnflow
+  source:
+    repoURL: https://github.com/learnflow/learnflow-app
+    targetRevision: main
+    path: k8s/overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: learnflow-production
+  syncPolicy: {}
+  syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground

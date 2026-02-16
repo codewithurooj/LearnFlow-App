@@ -1,0 +1,92 @@
+{{- if .Values.progress.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.progress.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.progress.name }}
+spec:
+  replicas: {{ .Values.progress.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.progress.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.progress.name }}
+        {{- include "learnflow-backend.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- include "learnflow-backend.daprAnnotations" (dict "appId" .Values.progress.name "appPort" .Values.progress.port) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "learnflow-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: progress
+          image: "{{ .Values.global.imageRegistry }}{{ .Values.progress.image.repository }}:{{ .Values.progress.image.tag }}"
+          imagePullPolicy: {{ .Values.progress.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.progress.port }}
+              protocol: TCP
+          env:
+            {{- include "learnflow-backend.commonEnv" . | nindent 12 }}
+            - name: SERVICE_NAME
+              value: {{ .Values.progress.name | quote }}
+            - name: PORT
+              value: {{ .Values.progress.port | quote }}
+            - name: MASTERY_WEIGHT_EXERCISES
+              value: {{ .Values.progress.mastery.weightExercises | quote }}
+            - name: MASTERY_WEIGHT_QUIZZES
+              value: {{ .Values.progress.mastery.weightQuizzes | quote }}
+            - name: MASTERY_WEIGHT_CODE_QUALITY
+              value: {{ .Values.progress.mastery.weightCodeQuality | quote }}
+            - name: MASTERY_WEIGHT_STREAK
+              value: {{ .Values.progress.mastery.weightStreak | quote }}
+            - name: TOPIC_PROGRESS_UPDATED
+              value: {{ .Values.kafka.topics.progressUpdated | quote }}
+            - name: TOPIC_STRUGGLE_DETECTED
+              value: {{ .Values.kafka.topics.struggleDetected | quote }}
+            - name: STRUGGLE_LOW_SCORE_THRESHOLD
+              value: "0.5"
+          resources:
+            {{- toYaml .Values.progress.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthCheck.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+            initialDelaySeconds: {{ .Values.healthCheck.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthCheck.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthCheck.timeoutSeconds }}
+            successThreshold: {{ .Values.healthCheck.successThreshold }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.progress.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "learnflow-backend.labels" . | nindent 4 }}
+    app: {{ .Values.progress.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.progress.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.progress.name }}
+{{- end }}

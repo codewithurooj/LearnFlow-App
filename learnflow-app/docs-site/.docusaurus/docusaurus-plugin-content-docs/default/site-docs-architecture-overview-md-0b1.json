@@ -1,0 +1,26 @@
+{
+  "id": "architecture/overview",
+  "title": "Architecture Overview",
+  "description": "LearnFlow uses a microservices architecture running on Kubernetes with Dapr as the service mesh.",
+  "source": "@site/docs/architecture/overview.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/overview",
+  "permalink": "/architecture/overview",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "LearnFlow",
+    "permalink": "/"
+  },
+  "next": {
+    "title": "Services",
+    "permalink": "/architecture/services"
+  }
+}
