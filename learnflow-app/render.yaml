@@ -1,0 +1,130 @@
+services:
+  - type: web
+    name: learnflow-triage
+    runtime: docker
+    dockerfilePath: ./backend/services/triage/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+      - key: BETTER_AUTH_SECRET
+        sync: false
+
+  - type: web
+    name: learnflow-concepts
+    runtime: docker
+    dockerfilePath: ./backend/services/concepts/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-code-runner
+    runtime: docker
+    dockerfilePath: ./backend/services/code-runner/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-debug
+    runtime: docker
+    dockerfilePath: ./backend/services/debug/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-exercise
+    runtime: docker
+    dockerfilePath: ./backend/services/exercise/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-progress
+    runtime: docker
+    dockerfilePath: ./backend/services/progress/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-code-review
+    runtime: docker
+    dockerfilePath: ./backend/services/code-review/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
+
+  - type: web
+    name: learnflow-mcp-context
+    runtime: docker
+    dockerfilePath: ./backend/services/mcp-context/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: USE_NEON
+        value: "true"
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEON_DATABASE_URL
+        sync: false
