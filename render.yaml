@@ -2,8 +2,9 @@ services:
   - type: web
     name: learnflow-triage
     runtime: docker
-    dockerfilePath: ./backend/services/triage/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/triage/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -20,8 +21,9 @@ services:
   - type: web
     name: learnflow-concepts
     runtime: docker
-    dockerfilePath: ./backend/services/concepts/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/concepts/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -36,8 +38,9 @@ services:
   - type: web
     name: learnflow-code-runner
     runtime: docker
-    dockerfilePath: ./backend/services/code-runner/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/code-runner/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -52,8 +55,9 @@ services:
   - type: web
     name: learnflow-debug
     runtime: docker
-    dockerfilePath: ./backend/services/debug/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/debug/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -68,8 +72,9 @@ services:
   - type: web
     name: learnflow-exercise
     runtime: docker
-    dockerfilePath: ./backend/services/exercise/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/exercise/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -84,8 +89,9 @@ services:
   - type: web
     name: learnflow-progress
     runtime: docker
-    dockerfilePath: ./backend/services/progress/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/progress/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -100,8 +106,9 @@ services:
   - type: web
     name: learnflow-code-review
     runtime: docker
-    dockerfilePath: ./backend/services/code-review/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/code-review/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
@@ -116,8 +123,9 @@ services:
   - type: web
     name: learnflow-mcp-context
     runtime: docker
-    dockerfilePath: ./backend/services/mcp-context/Dockerfile
-    dockerContext: ./backend
+    rootDir: learnflow-app/backend
+    dockerfilePath: services/mcp-context/Dockerfile
+    dockerContext: .
     plan: free
     envVars:
       - key: ENVIRONMENT
